@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class VerificationCodeController {
 
-    private String verificationcodePrefix = "passenger-verificationcode-"
+    private final String verificationcodePrefix = "passenger-verificationcode-";
 
     @Autowired
     ServiceVerificationCodeClient serviceVerificationCodeClient;
