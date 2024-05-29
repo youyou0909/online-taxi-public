@@ -1,6 +1,8 @@
 package com.clj.apipassenger.controller;
 
 import com.clj.apipassenger.remote.ServiceVerificationCodeClient;
+import com.clj.common.constants.VerifycodeConstants;
+import com.clj.common.request.VerificationRequest;
 import com.clj.common.response.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -17,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class VerificationCodeController {
 
-    private final String verificationcodePrefix = "passenger-verificationcode-";
+//    private final String verificationcodePrefix = "passenger-verificationcode-";
 
     @Autowired
     ServiceVerificationCodeClient serviceVerificationCodeClient;
@@ -25,17 +27,23 @@ public class VerificationCodeController {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 获取验证码 发送短信
+     * */
     @GetMapping("/verification-code")
-    public ResponseResult getVirificationCode(@RequestBody String userPhone){
-        System.out.println(userPhone);
+    public ResponseResult getVirificationCode(@RequestBody VerificationRequest request){
+        String passengerPhone = request.getPassengerPhone();
+        System.out.println("passengerPhone : " + passengerPhone);
         // 调用service-virificationcode服务 获取验证码
         ResponseResult numberCodeResult = serviceVerificationCodeClient.getNumberCode();
         System.out.println("返回的验证码：" + numberCodeResult.getData());
         // 存入redis中
-        String key = verificationcodePrefix + userPhone;
+        String key = VerifycodeConstants.verificationcodePrefix + passengerPhone;
         stringRedisTemplate.opsForValue().set(key,numberCodeResult.getData() + "",2, TimeUnit.MINUTES);
 
         // 发送短信
+        System.out.println("发送短信");
+
         return ResponseResult.success(numberCodeResult.getData());
     }
 }

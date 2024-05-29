@@ -45,5 +45,9 @@ public class ResponseResult<T extends Object> {
                                    .setMessage(CommonStatusEnum.FAIL.getValue())
                                    .setData(data);
     }
+    public static <T> ResponseResult fail(int code,String message){
+        return new ResponseResult().setCode(code)
+                .setMessage(message);
+    }
 
 }
